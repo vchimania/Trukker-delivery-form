@@ -11,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+// import { log } from 'node:console';
 
 @Component({
   selector: 'app-item-delivery',
@@ -201,7 +202,6 @@ export class ItemDeliveryComponent implements OnInit {
     {
       id: 4,
       categoryName: 'Ovens',
-      rate2: 2000,
     },
   ];
 
@@ -250,6 +250,16 @@ export class ItemDeliveryComponent implements OnInit {
       rate: 3,
       subName: 'King Bed & Mattress',
       rate1: 700,
+    },
+    {
+      rate: 4,
+      subName: 'Oven 1',
+      rate1: 7000,
+    },
+    {
+      rate: 4,
+      subName: 'Oven 2',
+      rate1: 800,
     },
   ];
 
@@ -302,7 +312,7 @@ export class ItemDeliveryComponent implements OnInit {
         console.warn('repsonse ', response);
       });
   }
-
+ 
   // TODO: Use EventEmitter with form value
   //console.log(this.profileForm.value);
 
@@ -339,11 +349,24 @@ export class ItemDeliveryComponent implements OnInit {
   public itemsArr: any[] = [];
   public final = 0;
   public vat = 0;
+  public vat1 = 0;
   public total=0;
   public subVat=0;
   public subTotal=0;
   public subFinal=0;
 
+  deleteBtnHandler(i) {
+    // console.log('delete', i);
+    console.log(this.itemsArr[i].rate1);
+    this.total-=this.itemsArr[i].rate1;
+    this.vat1 = (this.itemsArr[i].rate1 / 100) * 5;
+    this.final-=this.itemsArr[i].rate1;
+    this.final-=this.vat1;
+    this.itemsArr.splice(i, 1);
+    this.profileForm.get(['items']).value.splice(i, 1);
+    this.subTotal=this.total;
+    
+  }
   displayform() {
     this.flag = true;
     this.showData = this.sub.filter((o) => o.subName == this.selectionModel1);
@@ -361,6 +384,9 @@ export class ItemDeliveryComponent implements OnInit {
     this.subVat=(this.subTotal/100)*5;
     this.subFinal=(this.subTotal+this.subVat)
   }
+  
+  
+  // ---------
   // copySellerDetails() {
   //   this.profileForm.patchValue({
   //     pickUpContactName: this.name.value,
@@ -409,7 +435,9 @@ export class ItemDeliveryComponent implements OnInit {
   //     dropContactNumber: this.number.value,
   //   });
   // }
-
+  get items() {
+    return this.profileForm.get('items');
+  }
   get name() {
     return this.profileForm.get('name');
   }
